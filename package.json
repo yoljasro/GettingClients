@@ -1,0 +1,20 @@
+{
+  "name": "jasur",
+  "version": "1.0.0",
+  "description": "this",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.mjs"
+  },
+  "keywords": [
+    "this"
+  ],
+  "author": "Jasur",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "mongoose": "^8.15.1",
+    "node-telegram-bot-api": "^0.66.0",
+    "nodemon": "^3.1.10"
+  }
+}
