@@ -1,5 +1,6 @@
 import TelegramBot from 'node-telegram-bot-api';
 import dotenv from 'dotenv';
+import nodemailer from 'nodemailer';
 
 dotenv.config();
 
@@ -202,10 +203,37 @@ function sendToClientBot(chatId, user) {
 
   mainBot.sendMessage(chatId, 'Спасибо! Ваша заявка принята. Мы скоро с вами свяжемся.');
 
+  // Telegramga yuborish
   clientChatIds.forEach(id => {
     clientBot.sendMessage(id, message).catch(err => {
       console.error(`Ошибка отправки клиенту (${id}):`, err.message);
     });
+  });
+
+  // Emailga yuborish
+  const transporter = nodemailer.createTransport({
+    host: 'smtp.yandex.ru',
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS
+    }
+  });
+
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: process.env.EMAIL_RECEIVER,
+    subject: 'Новая заявка от клиента',
+    text: message
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error('Ошибка при отправке email:', error.message);
+    } else {
+      console.log('Email отправлен:', info.response);
+    }
   });
 
   users.delete(chatId);
