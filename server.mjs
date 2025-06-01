@@ -106,9 +106,7 @@ mainBot.on('message', (msg) => {
       }]));
       buttons.push([{ text: 'Другая услуга', callback_data: 'otherService' }]);
       mainBot.sendMessage(chatId, 'Выберите тип сервиса:', {
-        reply_markup: {
-          inline_keyboard: buttons
-        }
+        reply_markup: { inline_keyboard: buttons }
       });
       break;
     case 'awaitingManualService':
@@ -199,22 +197,18 @@ function sendToClientBot(chatId, user) {
 📧 Email: ${user.email}
 🛠️ Сервис: ${user.service}
 📄 TZ: ${user.tz || 'не указано'}
-  `;
+`;
 
   mainBot.sendMessage(chatId, 'Спасибо! Ваша заявка принята. Мы скоро с вами свяжемся.');
 
-  // Telegramga yuborish
   clientChatIds.forEach(id => {
     clientBot.sendMessage(id, message).catch(err => {
       console.error(`Ошибка отправки клиенту (${id}):`, err.message);
     });
   });
 
-  // Emailga yuborish
   const transporter = nodemailer.createTransport({
-    host: 'smtp.yandex.ru',
-    port: 465,
-    secure: true,
+    service: 'gmail',
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS
