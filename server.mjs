@@ -132,6 +132,7 @@ mainBot.on('callback_query', (query) => {
     const key = data.split(':')[1];
     user.service = SERVICE_KEYS[key];
     user.step = 'tz';
+    user.tzStep = 0;
     askServiceDetails(chatId, user);
   } else if (data === 'otherService') {
     user.step = 'awaitingManualService';
@@ -142,10 +143,11 @@ mainBot.on('callback_query', (query) => {
   } else if (data.startsWith('detail:')) {
     const answer = data.replace('detail:', '');
     user.tz = user.tz || '';
-    user.tz += `\nОтвет: ${answer}`;
     const questions = SERVICE_DETAILS[user.service];
-    if (user.tzStep < questions.length - 1) {
-      user.tzStep++;
+    const currentQuestion = questions[user.tzStep];
+    user.tz += `\n${currentQuestion.question}\nОтвет: ${answer}`;
+    user.tzStep++;
+    if (user.tzStep < questions.length) {
       sendDetailQuestion(chatId, user);
     } else {
       user.step = 'finalTZ';
@@ -177,10 +179,11 @@ function askServiceDetails(chatId, user) {
 }
 
 function sendDetailQuestion(chatId, user) {
-  const step = user.tzStep;
+  const step = user.tzStep ?? 0;
   const questions = SERVICE_DETAILS[user.service];
   const q = questions[step];
   const options = q.options.map(option => [{ text: option, callback_data: `detail:${option}` }]);
+  user.tzStep = step;
   mainBot.sendMessage(chatId, q.question, {
     reply_markup: {
       inline_keyboard: options
@@ -197,7 +200,7 @@ function sendToClientBot(chatId, user) {
 📧 Email: ${user.email}
 🛠️ Сервис: ${user.service}
 📄 TZ: ${user.tz || 'не указано'}
-`;
+  `;
 
   mainBot.sendMessage(chatId, 'Спасибо! Ваша заявка принята. Мы скоро с вами свяжемся!');
 
