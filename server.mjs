@@ -199,7 +199,7 @@ function sendToClientBot(chatId, user) {
 📄 TZ: ${user.tz || 'не указано'}
 `;
 
-  mainBot.sendMessage(chatId, 'Спасибо! Ваша заявка принята. Мы скоро с вами свяжемся.');
+  mainBot.sendMessage(chatId, 'Спасибо! Ваша заявка принята. Мы скоро с вами свяжемся!');
 
   clientChatIds.forEach(id => {
     clientBot.sendMessage(id, message).catch(err => {
